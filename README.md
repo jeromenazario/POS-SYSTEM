@@ -60,5 +60,5 @@ README.md    ← this file
 ---
  
 ## Author
- 
+JEROME NAZARIO
 Made with ❤️ as a Final Exam Project

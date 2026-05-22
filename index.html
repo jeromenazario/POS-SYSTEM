@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kuya's Streetfood - POS System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"/>
+  <style>
+    body {
+      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+
+    /* ---- header ---- */
+    .pos-header {
+      background-color: #e65c00;
+      color: white;
+      padding: 12px 20px;
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .pos-header span {
+      font-size: 14px;
+      font-weight: normal;
+      margin-left: 10px;
+      opacity: 0.85;
+    }
+
+    /* ---- menu panel ---- */
+    .menu-panel {
+      background: white;
+      border-radius: 6px;
+      padding: 15px;
+      min-height: 80vh;
+    }
+    .menu-panel h5 {
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    /* search bar */
+    .search-bar {
+      margin-bottom: 15px;
+    }
+    .search-bar input {
+      border-radius: 4px 0 0 4px;
+    }
+    .search-bar button {
+      border-radius: 0 4px 4px 0;
+      background-color: #e65c00;
+      color: white;
+      border: none;
+    }
+
+    /* category buttons */
+    .category-btns {
+      margin-bottom: 15px;
+    }
+    .category-btns button {
+      margin-right: 6px;
+      margin-bottom: 6px;
+      border-radius: 20px;
+      font-size: 13px;
+      padding: 4px 14px;
+    }
+    .category-btns button.active {
+      background-color: #e65c00;
+      border-color: #e65c00;
+      color: white;
+    }
+
+    /* food cards */
+    .food-card {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .food-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+    .food-card .card-body {
+      padding: 10px 12px;
+    }
+    .food-card .item-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+    .food-card .item-price {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    .food-card input[type="number"] {
+      width: 100%;
+      padding: 5px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .food-card .btn-add {
+      width: 100%;
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .food-card .btn-add:hover {
+      background-color: #0b5ed7;
+    }
+
+    /* ---- order panel ---- */
+    .order-panel {
+      background: white;
+      border-radius: 6px;
+      padding: 15px;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .order-panel h5 {
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    /* ordered items list */
+    .ordered-list {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 360px;
+      margin-bottom: 10px;
+    }
+    .order-item {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: #fafafa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .order-item .item-info .name {
+      font-weight: bold;
+      font-size: 15px;
+    }
+    .order-item .item-info .qty {
+      font-size: 13px;
+      color: #28a745;
+    }
+    .order-item .item-subtotal {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+    .order-item .btn-remove {
+      background: none;
+      border: none;
+      color: #dc3545;
+      font-size: 16px;
+      cursor: pointer;
+      margin-left: 8px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    /* total, payment */
+    .total-section {
+      border-top: 2px solid #e65c00;
+      padding-top: 10px;
+      margin-top: 5px;
+    }
+    .total-section .total-label {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .payment-section {
+      margin-top: 10px;
+    }
+    .payment-section input {
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      width: 100%;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .payment-section .change-label {
+      font-size: 15px;
+      color: #28a745;
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: none;
+    }
+    .btn-pay {
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn-pay:hover {
+      background-color: #218838;
+    }
+    .btn-clear {
+      width: 100%;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .btn-clear:hover {
+      background-color: #c82333;
+    }
+
+    /* receipt modal */
+    .receipt-box {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      white-space: pre;
+      background: #fff;
+      padding: 20px;
+      border: 1px dashed #aaa;
+      border-radius: 4px;
+    }
+
+    /* empty order msg */
+    .empty-msg {
+      text-align: center;
+      color: #aaa;
+      font-size: 14px;
+      padding: 30px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="pos-header">
+  🍢 Kuya's Streetfood POS
+  <span>Point of Sale System</span>
+</div>
+
+<div class="container-fluid mt-3 pb-4">
+  <div class="row g-3">
+
+    <!-- ===== MENU PANEL ===== -->
+    <div class="col-md-8">
+      <div class="menu-panel">
+        <h5>Menu</h5>
+
+        <!-- Search -->
+        <div class="search-bar input-group">
+          <input type="text" id="searchInput" class="form-control" placeholder="Search menu..." oninput="filterMenu()"/>
+          <button onclick="filterMenu()">Search</button>
+        </div>
+
+        <!-- Category filter -->
+        <div class="category-btns">
+          <button class="btn btn-outline-secondary active" onclick="filterCategory('All', this)">All</button>
+          <button class="btn btn-outline-secondary" onclick="filterCategory('Streetfood', this)">Streetfood</button>
+          <button class="btn btn-outline-secondary" onclick="filterCategory('Burgers', this)">Burgers</button>
+          <button class="btn btn-outline-secondary" onclick="filterCategory('Drinks', this)">Drinks</button>
+        </div>
+
+        <!-- Menu items grid -->
+        <div class="row" id="menuGrid"></div>
+      </div>
+    </div>
+
+    <!-- ===== ORDER PANEL ===== -->
+    <div class="col-md-4">
+      <div class="order-panel">
+        <h5>Ordered Items</h5>
+
+        <div class="ordered-list" id="orderedList">
+          <div class="empty-msg" id="emptyMsg">No items added yet.</div>
+        </div>
+
+        <!-- Total -->
+        <div class="total-section">
+          <div class="total-label">Total: <span id="totalDisplay">0 PHP</span></div>
+        </div>
+
+        <!-- Payment -->
+        <div class="payment-section">
+          <input type="number" id="paymentInput" placeholder="Enter the amount here" min="0"/>
+          <div class="change-label" id="changeLabel"></div>
+          <button class="btn-pay" onclick="processPayment()">Pay!</button>
+          <button class="btn-clear" onclick="clearOrder()">Clear Order</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="modal fade" id="receiptModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">🧾 Receipt</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-box" id="receiptContent"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sm btn-secondary" onclick="printReceipt()">🖨️ Print</button>
+        <button class="btn btn-sm btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+
+  // ===== MENU DATA =====
+  const menuItems = [
+    {
+      id: 1, name: "Burger", price: 60, category: "Burgers",
+      img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80"
+    },
+    {
+      id: 2, name: "Fishbol", price: 20, category: "Streetfood",
+      img: "https://www.kawalingpinoy.com/wp-content/uploads/2016/09/homemade-fish-balls-with-spicy-fishball-sauce.jpg"
+    },
+    {
+      id: 3, name: "Kwek-kwek", price: 25, category: "Streetfood",
+      img: "https://www.kawalingpinoy.com/wp-content/uploads/2019/07/kwek-kwek-14.jpg"
+    },
+    {
+      id: 4, name: "Kikiam", price: 20, category: "Streetfood",
+      img: "https://www.kawalingpinoy.com/wp-content/uploads/2019/07/homemade-kikiam-4.jpg"
+    },
+    {
+      id: 5, name: "Hotdog on Stick", price: 25, category: "Streetfood",
+      img: "https://images.unsplash.com/photo-1612392062631-94dd797f8ad8?w=400&q=80"
+    },
+    {
+      id: 6, name: "Cheese Burger", price: 75, category: "Burgers",
+      img: "https://images.unsplash.com/photo-1550317138-10000687a72b?w=400&q=80"
+    },
+    {
+      id: 7, name: "Sago't Gulaman", price: 20, category: "Drinks",
+      img: "https://panlasangpinoy.com/wp-content/uploads/2011/10/Sago-at-Gulaman.jpg"
+    },
+    {
+      id: 8, name: "Buko Juice", price: 25, category: "Drinks",
+      img: "https://www.kawalingpinoy.com/wp-content/uploads/2017/05/buko-salad-drink-3.jpg"
+    }
+  ];
+
+  let order = {}; // { itemId: { name, price, qty } }
+  let currentCategory = "All";
+  let currentSearch = "";
+
+  // ===== RENDER MENU =====
+  function renderMenu(items) {
+    const grid = document.getElementById("menuGrid");
+    grid.innerHTML = "";
+
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="col-12 text-center text-muted py-4">No items found.</div>`;
+      return;
+    }
+
+    items.forEach(item => {
+      const col = document.createElement("div");
+      col.className = "col-6 col-lg-3";
+      col.innerHTML = `
+        <div class="food-card">
+          <img src="${item.img}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/200x140?text=${item.name}'"/>
+          <div class="card-body">
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">${item.price} PHP</div>
+            <input type="number" id="qty_${item.id}" value="1" min="1" max="99"/>
+            <button class="btn-add" onclick="addToOrder(${item.id})">Add to order</button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(col);
+    });
+  }
+
+  function filterMenu() {
+    currentSearch = document.getElementById("searchInput").value.toLowerCase();
+    applyFilters();
+  }
+
+  function filterCategory(cat, btn) {
+    currentCategory = cat;
+    document.querySelectorAll(".category-btns button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    applyFilters();
+  }
+
+  function applyFilters() {
+    let filtered = menuItems;
+    if (currentCategory !== "All") {
+      filtered = filtered.filter(i => i.category === currentCategory);
+    }
+    if (currentSearch) {
+      filtered = filtered.filter(i => i.name.toLowerCase().includes(currentSearch));
+    }
+    renderMenu(filtered);
+  }
+
+  // ===== ADD TO ORDER =====
+  function addToOrder(itemId) {
+    const item = menuItems.find(i => i.id === itemId);
+    const qtyInput = document.getElementById("qty_" + itemId);
+    const qty = parseInt(qtyInput.value);
+
+    if (!qty || qty < 1) {
+      alert("Please enter a valid quantity.");
+      return;
+    }
+
+    if (order[itemId]) {
+      order[itemId].qty += qty;
+    } else {
+      order[itemId] = { name: item.name, price: item.price, qty: qty };
+    }
+
+    qtyInput.value = 1;
+    renderOrder();
+  }
+
+  // ===== RENDER ORDER =====
+  function renderOrder() {
+    const list = document.getElementById("orderedList");
+    const emptyMsg = document.getElementById("emptyMsg");
+    list.innerHTML = "";
+
+    const keys = Object.keys(order);
+
+    if (keys.length === 0) {
+      list.innerHTML = `<div class="empty-msg">No items added yet.</div>`;
+      updateTotal();
+      return;
+    }
+
+    keys.forEach(id => {
+      const o = order[id];
+      const subtotal = o.price * o.qty;
+      const div = document.createElement("div");
+      div.className = "order-item";
+      div.innerHTML = `
+        <div class="item-info">
+          <div class="name">${o.name}</div>
+          <div class="qty">Qty: ${o.qty}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="item-subtotal">${subtotal} PHP</div>
+          <button class="btn-remove" onclick="removeItem(${id})" title="Remove">✕</button>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+
+    updateTotal();
+  }
+
+  // ===== REMOVE ITEM =====
+  function removeItem(itemId) {
+    delete order[itemId];
+    renderOrder();
+  }
+
+  // ===== UPDATE TOTAL =====
+  function updateTotal() {
+    let total = 0;
+    Object.values(order).forEach(o => total += o.price * o.qty);
+    document.getElementById("totalDisplay").textContent = total + " PHP";
+
+    // update change if payment is already filled
+    const payment = parseFloat(document.getElementById("paymentInput").value);
+    if (!isNaN(payment) && payment > 0) {
+      showChange(total, payment);
+    } else {
+      document.getElementById("changeLabel").style.display = "none";
+    }
+    return total;
+  }
+
+  // show change live as user types
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("paymentInput").addEventListener("input", () => {
+      const total = Object.values(order).reduce((s, o) => s + o.price * o.qty, 0);
+      const payment = parseFloat(document.getElementById("paymentInput").value);
+      if (!isNaN(payment) && payment >= 0) {
+        showChange(total, payment);
+      } else {
+        document.getElementById("changeLabel").style.display = "none";
+      }
+    });
+  });
+
+  function showChange(total, payment) {
+    const changeEl = document.getElementById("changeLabel");
+    const change = payment - total;
+    if (change >= 0) {
+      changeEl.textContent = "Change: " + change.toFixed(2) + " PHP";
+      changeEl.style.color = "#28a745";
+    } else {
+      changeEl.textContent = "Short by: " + Math.abs(change).toFixed(2) + " PHP";
+      changeEl.style.color = "#dc3545";
+    }
+    changeEl.style.display = "block";
+  }
+
+  // ===== PAY =====
+  function processPayment() {
+    const keys = Object.keys(order);
+    if (keys.length === 0) {
+      alert("No items in order!");
+      return;
+    }
+
+    const total = Object.values(order).reduce((s, o) => s + o.price * o.qty, 0);
+    const payment = parseFloat(document.getElementById("paymentInput").value);
+
+    if (isNaN(payment) || payment <= 0) {
+      alert("Please enter the payment amount.");
+      return;
+    }
+    if (payment < total) {
+      alert("Payment is not enough! Total is " + total + " PHP.");
+      return;
+    }
+
+    const change = payment - total;
+    showReceipt(total, payment, change);
+  }
+
+  // ===== RECEIPT =====
+  function showReceipt(total, payment, change) {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString();
+    const timeStr = now.toLocaleTimeString();
+
+    let lines = [];
+    lines.push("============================");
+    lines.push("    Kuya's Streetfood POS   ");
+    lines.push("============================");
+    lines.push("Date: " + dateStr + "  " + timeStr);
+    lines.push("----------------------------");
+    lines.push("Item             Qty  Amount");
+    lines.push("----------------------------");
+
+    Object.values(order).forEach(o => {
+      const subtotal = o.price * o.qty;
+      const namePad = o.name.padEnd(16, " ").slice(0,16);
+      const qtyPad = String(o.qty).padStart(3, " ");
+      const amtPad = String(subtotal + " PHP").padStart(7, " ");
+      lines.push(namePad + qtyPad + "  " + amtPad);
+    });
+
+    lines.push("----------------------------");
+    lines.push("TOTAL:            " + String(total + " PHP").padStart(8, " "));
+    lines.push("PAYMENT:          " + String(payment + " PHP").padStart(8, " "));
+    lines.push("CHANGE:           " + String(change.toFixed(2) + " PHP").padStart(8, " "));
+    lines.push("============================");
+    lines.push("   Thank you! Come again!   ");
+    lines.push("============================");
+
+    document.getElementById("receiptContent").textContent = lines.join("\n");
+
+    const modal = new bootstrap.Modal(document.getElementById("receiptModal"));
+    modal.show();
+
+    // clear after showing receipt
+    order = {};
+    renderOrder();
+    document.getElementById("paymentInput").value = "";
+    document.getElementById("changeLabel").style.display = "none";
+  }
+
+  function printReceipt() {
+    const content = document.getElementById("receiptContent").textContent;
+    const win = window.open("", "_blank", "width=400,height=600");
+    win.document.write(`<pre style="font-family:Courier New;font-size:13px;padding:20px;">${content}</pre>`);
+    win.document.close();
+    win.print();
+  }
+
+  // ===== CLEAR ORDER =====
+  function clearOrder() {
+    if (Object.keys(order).length === 0) return;
+    if (confirm("Clear all items from the order?")) {
+      order = {};
+      renderOrder();
+      document.getElementById("paymentInput").value = "";
+      document.getElementById("changeLabel").style.display = "none";
+    }
+  }
+
+  // ===== INIT =====
+  renderMenu(menuItems);
+
+</script>
+</body>
+</html>
